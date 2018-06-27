@@ -4,6 +4,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
+
+    lintOptions{
+        abortOnError false
+    }
     signingConfigs {
         releaseConfig {
             keyAlias key_alias_kitso
