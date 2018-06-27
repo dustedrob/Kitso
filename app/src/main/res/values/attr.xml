@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="KitsoCard">
+        <attr name="top_title" format="string" />
+        <attr name="amount" format="string" />
+        <attr name="bottom_title" format="string" />
+    </declare-styleable>
+
+</resources>
+
+

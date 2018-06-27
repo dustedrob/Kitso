@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Kitso</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="ticker">Ticker</string>
+    <string name="wallet">Wallet</string>
+    <string name="wallet_navigation">Wallet</string>
+    <string name="balance_peso_mxn">Balance Peso (MXN)</string>
+    <string name="mexican_peso_mxn">MEXICAN PESO (MXN)</string>
+    <string name="balance_btc">Balance Bitcoin (BTC)</string>
+    <string name="bitcoin_btc">BITCOIN (BTC)</string>
+    <string name="balance_ether">Balance Ether (ETH)</string>
+    <string name="ether_eth">ETHER (ETH)</string>
+    <string name="title_market">Market</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ultimo_precio">ÚLTIMO PRECIO</string>
+    <string name="volumen_24_horas">VOLÚMEN 24 HORAS</string>
+    <string name="variacion">VARIACIÓN</string>
+    <string name="maximo">MÁXIMO</string>
+    <string name="minimo">MÍNIMO</string>
+    <string name="title_activity_market">MarketActivity</string>
+    <string name="action_settings">Configuración</string>
+    <string name="update">Actualizar</string>
+    <string name="one_year">1 yr</string>
+    <string name="one_month">1m</string>
+    <string name="seven_days">7d</string>
+    <string name="auto_refresh">Auto Actualizar</string>
+    <string name="linear">Linear</string>
+    <string name="candle" >Vela</string>
+</resources>

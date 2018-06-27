@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinner_array">
+        <item>MXN/BTC</item>
+        <item>MXN/ETH</item>
+        <item>BTC/XRP</item>
+        <item>MXN/XRP</item>
+        <item>BTC/ETH</item>
+        <item>BTC/BCH</item>
+        <item>BTC/LTC</item>
+        <item>MXN/LTC</item>
+        <item>MXN/BCH</item>
+
+    </string-array>
+</resources>
