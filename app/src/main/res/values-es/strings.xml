@@ -28,6 +28,6 @@
     <string name="one_month">1m</string>
     <string name="seven_days">7d</string>
     <string name="auto_refresh">Auto Actualizar</string>
-    <string name="linear">Linear</string>
+    <string name="linear">Lineal</string>
     <string name="candle" >Vela</string>
 </resources>
