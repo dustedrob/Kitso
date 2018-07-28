@@ -30,6 +30,8 @@
     @com.squareup.moshi.* <methods>;
 }
 
+
+ -dontwarn okhttp3.internal.platform.*
 -keep @com.squareup.moshi.JsonQualifier interface *
 
 -dontwarn retrofit2.Platform$Java8

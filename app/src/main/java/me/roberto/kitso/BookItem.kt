@@ -1,12 +1,19 @@
 package me.roberto.kitso
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
+import androidx.annotation.NonNull
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
 @Keep
+
+	@Entity
 data class BookItem(
     @Json(name="book")
-    val book: String?,
+    @PrimaryKey
+	@NonNull
+    var book: String,
 
 	@Json(name="minimum_price")
 	val minimumPrice: String?,

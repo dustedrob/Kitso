@@ -1,10 +1,10 @@
-package me.roberto.kitso
+package me.roberto.kitso.ui
 
 import android.content.Context
-import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import me.roberto.kitso.R
 
 /**
@@ -21,7 +21,7 @@ class KitsoCard(context: Context, attrs: AttributeSet) : CardView(context, attrs
         var textView = findViewById<TextView>(R.id.top_title)
         textView.text=top_title_text
 
-        textView = findViewById<TextView>(R.id.amount) as TextView
+        textView = findViewById<TextView>(R.id.amount)
         textView.text=amount_text
 
 

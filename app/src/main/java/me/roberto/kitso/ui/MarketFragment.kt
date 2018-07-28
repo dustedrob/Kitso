@@ -1,29 +1,38 @@
-package me.roberto.kitso
+package me.roberto.kitso.ui
 
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_market.*
 import kotlinx.android.synthetic.main.price_layout.*
+import me.roberto.kitso.Book
+import me.roberto.kitso.BookItem
+import me.roberto.kitso.HistoricData
+import me.roberto.kitso.R
+import me.roberto.kitso.database.Injection
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,6 +63,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     private lateinit var viewModel: MarketViewModel
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
@@ -68,21 +78,31 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             progressBar.visibility = View.VISIBLE
         }
         selectedItem = selectedIndex!!
-        val selectedItem = spinner.selectedItem as BookItem
-        val range = "1month"
 
-        viewModel.updateBook(selectedItem.book!!)
-        viewModel.updateChartData(selectedItem.book, range)
+        if (spinner.selectedItem!=null) {
+            val selectedItem = spinner.selectedItem as BookItem
+            val range = "1month"
 
+
+            viewModel.updateBook(selectedItem.book!!)
+            viewModel.updateChartData(selectedItem.book, range)
+
+        }
+        else
+        {
+            refreshLayout?.isRefreshing = false
+            Snackbar.make(my_toolbar,"Network Error",Snackbar.LENGTH_SHORT).show()
+        }
 
     }
 
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
 
-        if (selectedItem != p2)
+        if (selectedItem != p2) {
+            Log.i(TAG, "updating coin: ")
             updateCoin()
-
+        }
         activity?.getSharedPreferences(PREFS, 0)?.edit()?.putInt(PREFS_SELECTED_ITEM, p2)?.commit()
 
 
@@ -247,7 +267,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     }
 
-    private val chartDataObserver: Observer<List<HistoricData>> = Observer { dataList ->
+    private val chartDataObserver = Observer<List<HistoricData>> { dataList ->
 
 
         if (dataList != null) {
@@ -318,12 +338,14 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(MarketViewModel::class.java)
+        viewModelFactory=Injection.provideViewModelFactory(activity!!)
+        viewModel = ViewModelProviders.of(this,viewModelFactory).get(MarketViewModel::class.java)
+
         viewModel.availableBooks?.observe(this, bookObserver)
         viewModel.book?.observe(this, tickerObserver)
         viewModel.chartData?.observe(this, chartDataObserver)
 
-        viewModel.findAvailableBooks()
+        viewModel.updateBooks()
 
 
 

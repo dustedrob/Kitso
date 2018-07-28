@@ -1,6 +1,6 @@
 package me.roberto.kitso
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 
 /**
  * Created by roberto on 12/11/17.

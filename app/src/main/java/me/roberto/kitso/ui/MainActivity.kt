@@ -1,10 +1,11 @@
-package me.roberto.kitso
+package me.roberto.kitso.ui
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import me.roberto.kitso.R
 
 class MainActivity : AppCompatActivity() {
 

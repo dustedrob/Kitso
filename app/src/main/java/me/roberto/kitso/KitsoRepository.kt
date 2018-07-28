@@ -1,19 +1,17 @@
 package me.roberto.kitso
 
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.reactivex.*
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.Single
+import io.reactivex.SingleOnSubscribe
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.lang.reflect.Type
+
 
 /**
  * Created by roberto on 20/07/17.
@@ -38,6 +36,9 @@ class KitsoRepository {
 //    fun getOrderBook(bookSymbol: String):Observable<OrderBook>
 //    {
 //    }
+
+
+
 
 
     fun getHistoricData(bookSymbol: String,range:String):Single<List<HistoricData>>?
@@ -75,12 +76,14 @@ class KitsoRepository {
         val ticker = kitsoService.getTicker(bookSymbol)
 
 
+        Log.i(TAG, "getting ticker: ")
         val single= Single.create(SingleOnSubscribe<Book> { e ->
 
 
             val payload = ticker.execute().body()?.payload
 
             if (payload != null) {
+                Log.i(TAG, "sucess payload : "+payload.book)
                 e.onSuccess(payload)
             }
             else
@@ -95,25 +98,38 @@ class KitsoRepository {
 
     }
 
-    fun getAvailableBooks():Single<List<BookItem>> {
 
-        val availableBooks=kitsoService.getAvailableBooks()
 
-        val single=Single.create(SingleOnSubscribe<List<BookItem>>{e->
 
-            val body=availableBooks.execute().body()
-            Log.i(TAG, "body is ${body.toString()}")
-                    val payload=body?.payload
-            if (payload != null) {
-                e.onSuccess(payload)
-            }
+    fun getAvailableBooks(): Observable<List<BookItem>>? {
+
+
+        return Observable.create(ObservableOnSubscribe<List<BookItem>>{ e->
+
+            val availableBooks=kitsoService.getAvailableBooks()
+            val response=availableBooks.execute()
+
+                    if (response.isSuccessful)
+                    {
+
+                        val payload=response?.body()?.payload
+                        if (payload != null) {
+                            e.onNext(payload)
+                            e.onComplete()
+                        }
+                        else
+                        {
+                            e.onError(Exception("Error"))
+                        }
+
+                    }
             else
-            {
-                e.onError(Exception("Error"))
-            }
-        }).retry(3)
+                    {
+                        e.onError(Exception("Error"))
+                    }
 
-        return single
+
+        }).retry(3)
 
     }
 

@@ -1,11 +1,12 @@
-package me.roberto.kitso
+package me.roberto.kitso.ui
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import me.roberto.kitso.R
 
 
 /**
