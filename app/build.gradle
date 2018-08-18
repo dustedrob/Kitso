@@ -9,14 +9,14 @@ android {
     lintOptions{
         abortOnError false
     }
-//    signingConfigs {
-//        releaseConfig {
-//            keyAlias key_alias_kitso
-//            keyPassword key_password_kitso
-//            storeFile file(store_file_kitso)
-//            storePassword store_password_kitso
-//        }
-//    }
+    signingConfigs {
+        releaseConfig {
+            keyAlias key_alias_kitso
+            keyPassword key_password_kitso
+            storeFile file(store_file_kitso)
+            storePassword store_password_kitso
+        }
+    }
     compileSdkVersion 28
     buildToolsVersion '28.0.1'
     defaultConfig {
@@ -27,13 +27,13 @@ android {
         versionName "1.0.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-//    buildTypes {
-//        release {
-//            signingConfig signingConfigs.releaseConfig
-//            minifyEnabled true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//        }
-//    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.releaseConfig
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
     repositories {
         maven { url "https://jitpack.io" }
     }
