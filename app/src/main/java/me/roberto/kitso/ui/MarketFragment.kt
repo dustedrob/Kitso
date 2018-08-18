@@ -1,7 +1,6 @@
 package me.roberto.kitso.ui
 
 
-
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
@@ -79,7 +78,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         selectedItem = selectedIndex!!
 
-        if (spinner.selectedItem!=null) {
+        if (spinner.selectedItem != null) {
             val selectedItem = spinner.selectedItem as BookItem
             val range = "1month"
 
@@ -87,11 +86,9 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             viewModel.updateBook(selectedItem.book!!)
             viewModel.updateChartData(selectedItem.book, range)
 
-        }
-        else
-        {
+        } else {
             refreshLayout?.isRefreshing = false
-            Snackbar.make(my_toolbar,"Network Error",Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(my_toolbar, "Network Error", Snackbar.LENGTH_SHORT).show()
         }
 
     }
@@ -124,11 +121,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         refreshLayout?.setColorSchemeColors(ContextCompat.getColor(context!!, R.color.colorPrimaryDark))
         refreshLayout?.setOnRefreshListener {
             updateCoin()
-
         }
-
-
-
 
         return inflate
     }
@@ -211,7 +204,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         linear_chart.data = LineData(dataSet)
         linear_chart.invalidate()
 
-        
+
     }
 
 
@@ -225,7 +218,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.neutralColor = Color.BLUE
         dataSet.valueTextColor = Color.RED
-        
+
         dataSet.axisDependency = YAxis.AxisDependency.LEFT
 
         dataSet.setDrawValues(false)
@@ -264,14 +257,13 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         candle_chart.invalidate()
 
 
-
     }
 
     private val chartDataObserver = Observer<List<HistoricData>> { dataList ->
 
 
         if (dataList != null) {
-            
+
 
             val lineEntries = ArrayList<Entry>()
             val candleEntries = ArrayList<CandleEntry>()
@@ -288,9 +280,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             setLineChartVisual(dataSet, dataList, labels)
             setCandleSticktVisual(candleDataSet, dataList, labels)
 
-            when (radioGroup.checkedRadioButtonId)
-            {
-                R.id.candlestick_radio->{
+            when (radioGroup.checkedRadioButtonId) {
+                R.id.candlestick_radio -> {
 
 
                     linear_chart.visibility = View.GONE
@@ -298,7 +289,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                 }
 
-                R.id.linear_radio->{
+                R.id.linear_radio -> {
 
                     linear_chart.visibility = View.VISIBLE
                     candle_chart.visibility = View.GONE
@@ -338,8 +329,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModelFactory=Injection.provideViewModelFactory(activity!!)
-        viewModel = ViewModelProviders.of(this,viewModelFactory).get(MarketViewModel::class.java)
+        viewModelFactory = Injection.provideViewModelFactory(activity!!)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MarketViewModel::class.java)
 
         viewModel.availableBooks?.observe(this, bookObserver)
         viewModel.book?.observe(this, tickerObserver)
@@ -348,20 +339,30 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel.updateBooks()
 
 
-
-
         if (savedInstanceState != null) {
             spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
             progressBar.visibility = View.VISIBLE
 
         }
+
         my_toolbar.inflateMenu(R.menu.menu_market)
-        my_toolbar.setOnMenuItemClickListener { updateCoin();true }
+        my_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_settings -> {
+                    Log.i(TAG, "click on update")
+                    updateCoin()
+                }
+                R.id.action_auto_refresh -> {
+                    Log.i(TAG, "click on auto refresh")
+                    it.isChecked = !it.isChecked
+                    viewModel.autoRefreshData(it.isChecked)
+                }
+            }
+            true
+        }
 
 
-
-        refresh_switch.setOnCheckedChangeListener { _, isChecked -> viewModel.autoRefreshData(isChecked) }
-
+//        refresh_switch.setOnCheckedChangeListener { _, isChecked -> viewModel.autoRefreshData(isChecked) }
 
 
         radioGroup.setOnCheckedChangeListener { group, checkedId ->

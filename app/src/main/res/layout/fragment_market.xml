@@ -1,10 +1,10 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="me.roberto.kitso.ui.MarketFragment" android:layout_height="match_parent" android:layout_width="match_parent"
-    android:id="@+id/refresh">
-
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/refresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="me.roberto.kitso.ui.MarketFragment">
 
 
     <LinearLayout
@@ -23,7 +23,6 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <Spinner
-
                 android:id="@+id/spinner"
                 style="@style/appSpinner"
                 android:layout_width="wrap_content"
@@ -31,15 +30,13 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
 
-
-
-            <Switch
-                android:id="@+id/refresh_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/auto_refresh"
-                app:layout_constraintEnd_toEndOf="parent" />
+            <!--<Switch-->
+            <!--android:id="@+id/refresh_switch"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:text="@string/auto_refresh"-->
+            <!--app:layout_constraintEnd_toEndOf="parent" />-->
 
 
         </androidx.appcompat.widget.Toolbar>
@@ -61,7 +58,6 @@
         </androidx.cardview.widget.CardView>
 
 
-
         <androidx.cardview.widget.CardView
             android:id="@+id/chart_view"
             android:layout_width="match_parent"
@@ -72,10 +68,12 @@
             android:layout_marginTop="8dp"
             android:visibility="gone"
             tools:visibility="visible">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
                 <RadioGroup
                     android:id="@+id/radioGroup"
                     android:layout_width="wrap_content"
@@ -85,21 +83,21 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <RadioButton
-                        android:textSize="10sp"
                         android:id="@+id/linear_radio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/linear"
+                        android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <RadioButton
-                        android:textSize="10sp"
                         android:id="@+id/candlestick_radio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="@string/candle"
+                        android:textSize="10sp"
                         app:layout_constraintStart_toEndOf="@+id/linear_radio"
                         app:layout_constraintTop_toTopOf="parent" />
                 </RadioGroup>
@@ -108,54 +106,50 @@
                     android:id="@+id/linear_chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <com.github.mikephil.charting.charts.CandleStickChart
                     android:id="@+id/candle_chart"
-                    app:layout_constraintTop_toBottomOf="@id/radioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="8dp"
                     android:visibility="gone"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/radioGroup" />
 
             </LinearLayout>
 
 
+            <!--<RadioGroup-->
+            <!--android:id="@+id/radioGroup"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:visibility="gone"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent">-->
 
+            <!--<RadioButton-->
+            <!--android:id="@+id/year_radio"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:text="@string/seven_days"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent" />-->
 
-                <!--<RadioGroup-->
-                    <!--android:id="@+id/radioGroup"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginStart="8dp"-->
-                    <!--android:layout_marginTop="8dp"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:visibility="gone"-->
-                    <!--app:layout_constraintStart_toStartOf="parent"-->
-                    <!--app:layout_constraintTop_toTopOf="parent">-->
-
-                    <!--<RadioButton-->
-                        <!--android:id="@+id/year_radio"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="8dp"-->
-                        <!--android:text="@string/seven_days"-->
-                        <!--app:layout_constraintStart_toStartOf="parent"-->
-                        <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-                    <!--<RadioButton-->
-                        <!--android:id="@+id/month_radio"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginStart="8dp"-->
-                        <!--android:layout_marginTop="8dp"-->
-                        <!--android:checked="true"-->
-                        <!--android:text="@string/one_month"-->
-                        <!--app:layout_constraintStart_toEndOf="@+id/year_radio"-->
-                        <!--app:layout_constraintTop_toTopOf="parent" />-->
-                <!--</RadioGroup>-->
+            <!--<RadioButton-->
+            <!--android:id="@+id/month_radio"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:checked="true"-->
+            <!--android:text="@string/one_month"-->
+            <!--app:layout_constraintStart_toEndOf="@+id/year_radio"-->
+            <!--app:layout_constraintTop_toTopOf="parent" />-->
+            <!--</RadioGroup>-->
 
 
             <!--</android.support.constraint.ConstraintLayout>-->
@@ -175,7 +169,6 @@
             android:visibility="gone" />
 
     </LinearLayout>
-
 
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
