@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import me.roberto.kitso.BookItem
+import me.roberto.kitso.model.BookItem
 
 @Database(entities = [(BookItem::class)],version = 1)
 abstract class KitsoDatabase: RoomDatabase() {

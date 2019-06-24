@@ -1,4 +1,4 @@
-package me.roberto.kitso
+package me.roberto.kitso.model
 
 import androidx.annotation.Keep
 import androidx.annotation.NonNull

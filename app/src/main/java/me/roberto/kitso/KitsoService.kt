@@ -1,5 +1,7 @@
 package me.roberto.kitso
 
+import me.roberto.kitso.model.Book
+import me.roberto.kitso.model.BookItem
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

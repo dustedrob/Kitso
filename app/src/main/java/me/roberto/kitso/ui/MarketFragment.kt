@@ -27,14 +27,12 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_market.*
 import kotlinx.android.synthetic.main.price_layout.*
-import me.roberto.kitso.Book
-import me.roberto.kitso.BookItem
-import me.roberto.kitso.HistoricData
+import me.roberto.kitso.model.Book
+import me.roberto.kitso.model.BookItem
+import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.R
 import me.roberto.kitso.database.Injection
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
+import me.roberto.kitso.utils.Utils.stringToDate
 import kotlin.collections.ArrayList
 
 
@@ -83,7 +81,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val range = "1month"
 
 
-            viewModel.updateBook(selectedItem.book!!)
+            viewModel.updateBook(selectedItem.book)
             viewModel.updateChartData(selectedItem.book, range)
 
         } else {
@@ -107,7 +105,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     companion object {
-        val TAG = MarketFragment::class.java.simpleName!!
+        val TAG = MarketFragment::class.java.simpleName
         fun newInstance() = MarketFragment()
     }
 
@@ -127,14 +125,14 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    class BookAdapter(context: Context?, val resource: Int, val items: MutableList<BookItem>?) : ArrayAdapter<BookItem>(context, resource, items)
+    class BookAdapter(context: Context, resource: Int, items: MutableList<BookItem>) : ArrayAdapter<BookItem>(context, resource, items)
 
 
     private val bookObserver: Observer<List<BookItem>> = Observer { bookItems ->
 
 
-        val adapter = BookAdapter(context, R.layout.spinner_item, bookItems as MutableList<BookItem>?)
-        adapter.setDropDownViewResource(R.layout.spinner_item)
+        val adapter = context?.let { BookAdapter(it, R.layout.spinner_item, bookItems as MutableList<BookItem>) }
+        adapter?.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
 
         val savedCoin = activity!!.getSharedPreferences(PREFS, 0).getInt(PREFS_SELECTED_ITEM, -1)
@@ -306,24 +304,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    fun stringToDate(date: String?): String? {
-
-
-        val tz = TimeZone.getTimeZone("UTC")
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-        df.timeZone = tz
-        try {
-            val parse = df.parse(date)
-            val readableFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-            return readableFormat.format(parse)
-
-        } catch (e: ParseException) {
-            e.printStackTrace()
-            return null
-        }
-
-
-    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -360,10 +340,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
             true
         }
-
-
-//        refresh_switch.setOnCheckedChangeListener { _, isChecked -> viewModel.autoRefreshData(isChecked) }
-
 
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
 

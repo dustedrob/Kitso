@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import me.roberto.kitso.*
+import me.roberto.kitso.model.Book
+import me.roberto.kitso.model.BookItem
+import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.database.BookItemDao
 import java.util.concurrent.TimeUnit
 

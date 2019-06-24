@@ -7,6 +7,9 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Single
 import io.reactivex.SingleOnSubscribe
+import me.roberto.kitso.model.Book
+import me.roberto.kitso.model.BookItem
+import me.roberto.kitso.model.HistoricData
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
@@ -48,12 +51,12 @@ class KitsoRepository {
         //and the rest of the repository
         val client=OkHttpClient()
         val request= Request.Builder().url("https://bitso.com/trade/chartJSON/$bookSymbol/$range").build()
-        val type=Types.newParameterizedType(List::class.java,HistoricData::class.java)
+        val type=Types.newParameterizedType(List::class.java, HistoricData::class.java)
         val moshi= Moshi.Builder().build()
         val adapter=moshi.adapter<List<HistoricData>>(type)
 
         Log.i(TAG, "execute chart data: ")
-        val single=Single.create(SingleOnSubscribe<List<HistoricData>>  {e->
+        val single=Single.create(SingleOnSubscribe<List<HistoricData>>  { e->
             val json= client.newCall(request).execute().body()?.string()
 
             val fromJson:List<HistoricData>? = adapter.fromJson(json)
