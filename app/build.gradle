@@ -18,13 +18,13 @@ android {
         }
     }
     compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "me.roberto.kitso"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 12
-        versionName "1.0.10"
+        versionCode 14
+        versionName "1.0.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
