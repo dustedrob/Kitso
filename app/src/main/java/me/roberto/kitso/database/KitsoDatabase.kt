@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import me.roberto.kitso.model.BookItem
 
-@Database(entities = [(BookItem::class)],version = 1)
+@Database(entities = [(BookItem::class)],version = 2)
 abstract class KitsoDatabase: RoomDatabase() {
 
     abstract fun KitsoDatabase_Impl():BookItemDao
@@ -25,6 +26,7 @@ abstract class KitsoDatabase: RoomDatabase() {
         private fun buildDatabase(context: Context) =
                 Room.databaseBuilder(context.applicationContext,
                         KitsoDatabase::class.java, "Data.db")
+                        .fallbackToDestructiveMigration()
                         .build()
     }
 

@@ -7,11 +7,12 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import me.roberto.kitso.*
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.database.BookItemDao
+import me.roberto.kitso.model.OrderBook
+import me.roberto.kitso.repository.KitsoRepository
 import java.util.concurrent.TimeUnit
 
 /**
@@ -58,7 +59,6 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 
 
     fun autoRefreshData(checked: Boolean) {
-
         if (checked) {
             disposable = Observable.interval(10, TimeUnit.SECONDS, Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).retry().subscribe { updateBook(currentCoin) }
@@ -69,8 +69,6 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 
 
     fun updateBooks() {
-
-
         streamBooks()?.observeOn(AndroidSchedulers.mainThread())?.subscribe({list->
             availableBooks?.value = list},
                 {error-> Log.e(TAG, "error: "+error.message );})
@@ -81,7 +79,6 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
     private fun streamBooks(): Observable<List<BookItem>>? {
 
         val localBooks: Maybe<List<BookItem>>? = dataSource.load().subscribeOn(Schedulers.newThread()).filter { list -> !list.isEmpty() }
-
         val remoteBooks=kitsoRepository?.getAvailableBooks()?.subscribeOn(Schedulers.newThread())?.doOnNext{
             list->
             list.forEach {
@@ -104,7 +101,6 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 //            list
 //        }
 //                ?.subscribeOn(Schedulers.io())
-
 
         return Observable.concat(localBooks?.toObservable(), remoteBooks)
     }

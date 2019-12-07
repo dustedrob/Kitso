@@ -15,7 +15,7 @@ import me.roberto.kitso.R
 class WalletFragment : Fragment() {
 
     companion object {
-        val TAG = WalletFragment::class.java.simpleName!!
+        val TAG = WalletFragment::class.java.simpleName
         fun newInstance() = WalletFragment()
     }
 

@@ -1,12 +1,13 @@
 package me.roberto.kitso
 
+import me.roberto.kitso.repository.KitsoRepository
 import org.junit.Test
 
 import org.junit.Assert.*
 
 class KitsoRepositoryTest {
 
-    val kitsoRepository=KitsoRepository()
+    val kitsoRepository= KitsoRepository()
 
     @Test
     fun getHistoricData() {

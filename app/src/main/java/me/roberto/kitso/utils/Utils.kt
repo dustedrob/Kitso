@@ -1,5 +1,10 @@
 package me.roberto.kitso.utils
 
+import android.content.Context
+import android.util.TypedValue
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,5 +30,19 @@ object Utils {
         }
 
 
+    }
+
+    @ColorInt
+    fun resolveColorAttr(context: Context, @AttrRes colorAttr: Int): Int {
+        val resolvedAttr = resolveThemeAttr(context, colorAttr)
+        val colorRes = if (resolvedAttr.resourceId != 0) resolvedAttr.resourceId else resolvedAttr.data
+        return ContextCompat.getColor(context, colorRes)
+    }
+
+    fun resolveThemeAttr(context: Context, @AttrRes attrRes: Int): TypedValue {
+        val theme = context.getTheme()
+        val typedValue = TypedValue()
+        theme.resolveAttribute(attrRes, typedValue, true)
+        return typedValue
     }
 }

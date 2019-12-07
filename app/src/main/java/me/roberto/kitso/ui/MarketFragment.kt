@@ -2,42 +2,42 @@ package me.roberto.kitso.ui
 
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.*
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.charts.CandleStickChart
+import com.github.mikephil.charting.charts.LineChart
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_market.*
 import kotlinx.android.synthetic.main.price_layout.*
+import me.roberto.kitso.R
+import me.roberto.kitso.database.Injection
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
-import me.roberto.kitso.R
-import me.roberto.kitso.database.Injection
 import me.roberto.kitso.utils.Utils.stringToDate
-import kotlin.collections.ArrayList
 
 
 class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
+    private val SELECTED_INDEX = "selected_index"
+    private var selectedItem = -1
+    lateinit var lineChartAdapter: LineChartAdapter
+    lateinit var candleChartAdapter: CandleStickChartAdapter
+    private lateinit var viewModel: MarketViewModel
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var lineChart: LineChart
+    private lateinit var candleChart:CandleStickChart
     val PREFS = "me.roberto.kitso.preferences"
     val PREFS_SELECTED_ITEM = "me.roberto.kitso.preferences.item"
 
@@ -47,20 +47,22 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         selectedItem = savedInstanceState?.getInt(SELECTED_INDEX) ?: -1
 
+        context?.let {
+            viewModelFactory = Injection.provideViewModelFactory(it)
+            viewModel = ViewModelProvider(this,viewModelFactory)[MarketViewModel::class.java]
+        }
 
+
+        if (savedInstanceState != null) {
+            spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
+            progressBar.visibility = View.VISIBLE
+
+        }
     }
-
-    private val SELECTED_INDEX = "selected_index"
-    private var selectedItem = -1
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(SELECTED_INDEX, selectedItem)
     }
-
-
-    private lateinit var viewModel: MarketViewModel
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
@@ -79,8 +81,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         if (spinner.selectedItem != null) {
             val selectedItem = spinner.selectedItem as BookItem
             val range = "1month"
-
-
             viewModel.updateBook(selectedItem.book)
             viewModel.updateChartData(selectedItem.book, range)
 
@@ -95,12 +95,12 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
 
         if (selectedItem != p2) {
-            Log.i(TAG, "updating coin: ")
             updateCoin()
         }
-        activity?.getSharedPreferences(PREFS, 0)?.edit()?.putInt(PREFS_SELECTED_ITEM, p2)?.commit()
-
-
+        activity?.getSharedPreferences(PREFS, 0)?.edit {
+            putInt(PREFS_SELECTED_ITEM, p2)
+            commit()
+        }
     }
 
 
@@ -115,13 +115,50 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Inflate the layout for this fragment
         val inflate = inflater.inflate(R.layout.fragment_market, container, false)
         refreshLayout = inflate.findViewById(R.id.refresh)
+        lineChart = inflate.findViewById(R.id.linear_chart)
+        candleChart = inflate.findViewById(R.id.candle_chart)
+        lineChartAdapter = LineChartAdapter(lineChart)
+        candleChartAdapter = CandleStickChartAdapter(candleChart)
 
         refreshLayout?.setColorSchemeColors(ContextCompat.getColor(context!!, R.color.colorPrimaryDark))
         refreshLayout?.setOnRefreshListener {
             updateCoin()
         }
 
+
+        val toolbar : Toolbar = inflate.findViewById(R.id.my_toolbar)
+        toolbar.inflateMenu(R.menu.menu_market)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_settings -> {
+                    Log.i(TAG, "click on update")
+                    updateCoin()
+                }
+                R.id.action_auto_refresh -> {
+                    Log.i(TAG, "click on auto refresh")
+                    it.isChecked = !it.isChecked
+                    viewModel.autoRefreshData(it.isChecked)
+                }
+            }
+            true
+        }
+
+        val radioGroup = inflate.findViewById<RadioGroup>(R.id.radioGroup)
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            lineChartAdapter.setVisibility(checkedId)
+            candleChartAdapter.setVisibility(checkedId)
+        }
+
         return inflate
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.availableBooks?.observe(viewLifecycleOwner, bookObserver)
+        viewModel.book?.observe(viewLifecycleOwner, tickerObserver)
+        viewModel.chartData?.observe(viewLifecycleOwner, chartDataObserver)
+        viewModel.updateBooks()
+
     }
 
 
@@ -129,7 +166,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     private val bookObserver: Observer<List<BookItem>> = Observer { bookItems ->
-
 
         val adapter = context?.let { BookAdapter(it, R.layout.spinner_item, bookItems as MutableList<BookItem>) }
         adapter?.setDropDownViewResource(R.layout.spinner_item)
@@ -140,8 +176,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             spinner.setSelection(savedCoin)
         }
         spinner.onItemSelectedListener = this
-
-
     }
 
 
@@ -158,205 +192,24 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    fun setLineChartVisual(dataSet: LineDataSet, dataList: List<HistoricData>?, labels: MutableList<String>) {
-        dataSet.fillColor = ContextCompat.getColor(activity!!, R.color.colorPrimary)
-        dataSet.color = ContextCompat.getColor(activity!!, R.color.colorPrimary)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        dataSet.highLightColor = ContextCompat.getColor(activity!!, R.color.colorPrimaryDark)
-        dataSet.axisDependency = YAxis.AxisDependency.LEFT
-        dataSet.lineWidth = 2f
-        dataSet.setCircleColor(ContextCompat.getColor(activity!!, R.color.colorPrimaryDark))
-        dataSet.setDrawCircleHole(false)
-        dataSet.setDrawValues(false)
-        linear_chart.axisRight.setDrawLabels(false)
-        when (dataList?.size) {
-            in 0..10 -> linear_chart.xAxis.granularity = 2f
-            in 11..20 -> linear_chart.xAxis.granularity = 4f
-            in 21..31 -> linear_chart.xAxis.granularity = 7f
-
-        }
-
-        linear_chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        linear_chart.xAxis.setDrawGridLines(false)
-        val description = Description()
-        description.isEnabled = false
-        linear_chart.description = description
-        val legend = linear_chart.legend
-        legend.isEnabled = false
-
-
-        val formatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, axis: AxisBase?): String? {
-
-                if (value.toInt() <= labels.size) {
-                    return labels[value.toInt()]
-                }
-
-                return " "
-
-            }
-
-        }
-
-        linear_chart.xAxis.valueFormatter = formatter
-        linear_chart.data = LineData(dataSet)
-        linear_chart.invalidate()
-
-
-    }
-
-
-    fun setCandleSticktVisual(dataSet: CandleDataSet, dataList: List<HistoricData>?, labels: MutableList<String>) {
-
-        dataSet.shadowWidth = 1.8f
-        dataSet.decreasingColor = Color.argb(200, 158, 109, 131)
-        dataSet.shadowColorSameAsCandle = true
-        dataSet.decreasingPaintStyle = Paint.Style.FILL_AND_STROKE
-        dataSet.increasingColor = ContextCompat.getColor(activity!!, R.color.colorPrimary)
-        dataSet.increasingPaintStyle = Paint.Style.STROKE
-        dataSet.neutralColor = Color.BLUE
-        dataSet.valueTextColor = Color.RED
-
-        dataSet.axisDependency = YAxis.AxisDependency.LEFT
-
-        dataSet.setDrawValues(false)
-        candle_chart.axisRight.setDrawLabels(false)
-        when (dataList?.size) {
-            in 0..10 -> candle_chart.xAxis.granularity = 2f
-            in 11..20 -> candle_chart.xAxis.granularity = 4f
-            in 21..31 -> candle_chart.xAxis.granularity = 7f
-
-        }
-
-        candle_chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        candle_chart.xAxis.setDrawGridLines(false)
-        val description = Description()
-        description.isEnabled = false
-        candle_chart.description = description
-        val legend = candle_chart.legend
-        legend.isEnabled = false
-
-
-        val formatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, axis: AxisBase?): String? {
-
-                if (value.toInt() <= labels.size) {
-                    return labels[value.toInt()]
-                }
-
-                return " "
-
-            }
-
-        }
-
-        candle_chart.xAxis.valueFormatter = formatter
-        candle_chart.data = CandleData(dataSet)
-        candle_chart.invalidate()
-
-
-    }
-
     private val chartDataObserver = Observer<List<HistoricData>> { dataList ->
 
 
-        if (dataList != null) {
+        dataList?.let {
+            lineChartAdapter.setData(it)
+            candleChartAdapter.setData(it)
 
 
-            val lineEntries = ArrayList<Entry>()
-            val candleEntries = ArrayList<CandleEntry>()
-            val labels = ArrayList<String>()
-
-            for ((index, value) in dataList.withIndex()) {
-
-                lineEntries.add(Entry(index.toFloat(), value.close.toFloat()))
-                candleEntries.add(CandleEntry(index.toFloat(), value.high.toFloat(), value.low.toFloat(), value.open.toFloat(), value.close.toFloat()))
-                labels.add(value.dated)
+            context?.let { context ->
+                lineChartAdapter.setLineChartVisual(context)
+                candleChartAdapter.setCandleSticktVisual(context)
             }
-            val dataSet = LineDataSet(lineEntries, "Value")
-            val candleDataSet = CandleDataSet(candleEntries, "Value")
-            setLineChartVisual(dataSet, dataList, labels)
-            setCandleSticktVisual(candleDataSet, dataList, labels)
-
-            when (radioGroup.checkedRadioButtonId) {
-                R.id.candlestick_radio -> {
-
-
-                    linear_chart.visibility = View.GONE
-                    candle_chart.visibility = View.VISIBLE
-
-                }
-
-                R.id.linear_radio -> {
-
-                    linear_chart.visibility = View.VISIBLE
-                    candle_chart.visibility = View.GONE
-
-                }
-            }
+        }
+            lineChartAdapter.setVisibility(radioGroup.checkedRadioButtonId)
+            candleChartAdapter.setVisibility(radioGroup.checkedRadioButtonId)
 
             progressBar.visibility = View.GONE
             chart_view.visibility = View.VISIBLE
-
-
-        }
-
-    }
-
-
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModelFactory = Injection.provideViewModelFactory(activity!!)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MarketViewModel::class.java)
-
-        viewModel.availableBooks?.observe(this, bookObserver)
-        viewModel.book?.observe(this, tickerObserver)
-        viewModel.chartData?.observe(this, chartDataObserver)
-
-        viewModel.updateBooks()
-
-
-        if (savedInstanceState != null) {
-            spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
-            progressBar.visibility = View.VISIBLE
-
-        }
-
-        my_toolbar.inflateMenu(R.menu.menu_market)
-        my_toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_settings -> {
-                    Log.i(TAG, "click on update")
-                    updateCoin()
-                }
-                R.id.action_auto_refresh -> {
-                    Log.i(TAG, "click on auto refresh")
-                    it.isChecked = !it.isChecked
-                    viewModel.autoRefreshData(it.isChecked)
-                }
-            }
-            true
-        }
-
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-
-            when (checkedId) {
-                R.id.linear_radio -> {
-
-
-                    candle_chart.visibility = View.GONE
-                    linear_chart.visibility = View.VISIBLE
-                }
-
-                R.id.candlestick_radio -> {
-                    candle_chart.visibility = View.VISIBLE
-                    linear_chart.visibility = View.GONE
-                }
-            }
-        }
     }
 
 }
