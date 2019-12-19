@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Kitso</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="ticker">Ticker</string>
+    <string name="wallet">Wallet</string>
+    <string name="wallet_navigation">Wallet</string>
+    <string name="balance_peso_mxn">Balance Peso (MXN)</string>
+    <string name="mexican_peso_mxn">MEXICAN PESO (MXN)</string>
+    <string name="balance_btc">Balance Bitcoin (BTC)</string>
+    <string name="bitcoin_btc">BITCOIN (BTC)</string>
+    <string name="balance_ether">Balance Ether (ETH)</string>
+    <string name="ether_eth">ETHER (ETH)</string>
+    <string name="title_market">Market</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ultimo_precio">LAST PRICE</string>
+    <string name="volumen_24_horas">24 H VOLUME</string>
+    <string name="variacion">VARIATION</string>
+    <string name="maximo">MAX</string>
+    <string name="minimo">MIN</string>
+    <string name="title_activity_market">MarketActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="update">Update</string>
+    <string name="one_year">1 yr</string>
+    <string name="one_month">1m</string>
+    <string name="seven_days">7d</string>
+    <string name="auto_refresh">Auto Refresh</string>
+    <string name="linear">Linear</string>
+    <string name="candle" >Candlestick</string>
+</resources>
