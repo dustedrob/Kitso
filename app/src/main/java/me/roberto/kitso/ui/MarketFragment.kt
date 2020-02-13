@@ -36,6 +36,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var progressBar: ProgressBar
     lateinit var lineChartAdapter: LineChartAdapter
     lateinit var candleChartAdapter: CandleStickChartAdapter
+    private lateinit var spinner: Spinner
+    private lateinit var progressBar: ProgressBar
     private lateinit var viewModel: MarketViewModel
     private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var lineChart: LineChart
@@ -55,8 +57,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
 
-
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(SELECTED_INDEX, selectedItem)
@@ -118,6 +120,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Inflate the layout for this fragment
         val inflate = inflater.inflate(R.layout.fragment_market, container, false)
         refreshLayout = inflate.findViewById(R.id.refresh)
+        spinner = inflate.findViewById(R.id.spinner)
+        progressBar = inflate.findViewById(R.id.progressBar)
         lineChart = inflate.findViewById(R.id.linear_chart)
         candleChart = inflate.findViewById(R.id.candle_chart)
         lineChartAdapter = LineChartAdapter(lineChart)
@@ -163,11 +167,15 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (savedInstanceState != null) {
+            spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
+            progressBar.visibility = View.VISIBLE
+        }
         viewModel.availableBooks?.observe(viewLifecycleOwner, bookObserver)
         viewModel.book?.observe(viewLifecycleOwner, tickerObserver)
         viewModel.chartData?.observe(viewLifecycleOwner, chartDataObserver)
         viewModel.updateBooks()
-
     }
 
 

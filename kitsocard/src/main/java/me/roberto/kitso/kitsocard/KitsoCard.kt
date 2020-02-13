@@ -1,11 +1,10 @@
-package me.roberto.kitso.ui
+package me.roberto.kitso.kitsocard
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import me.roberto.kitso.R
 
 /**
  * Created by roberto on 14/06/17.

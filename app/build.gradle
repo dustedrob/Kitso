@@ -23,8 +23,8 @@ android {
         applicationId "me.roberto.kitso"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 14
-        versionName "1.0.12"
+        versionCode 15
+        versionName "1.0.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -46,8 +46,10 @@ dependencies {
     })
 
 
-    def room_version = "2.2.0"
-    def lifecycle_version = "2.2.0-rc02"
+    def room_version = "2.2.3"
+    def lifecycle_version = "2.2.0-rc03"
+
+    implementation project (":kitsocard")
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
