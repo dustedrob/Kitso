@@ -36,8 +36,6 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var progressBar: ProgressBar
     lateinit var lineChartAdapter: LineChartAdapter
     lateinit var candleChartAdapter: CandleStickChartAdapter
-    private lateinit var spinner: Spinner
-    private lateinit var progressBar: ProgressBar
     private lateinit var viewModel: MarketViewModel
     private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var lineChart: LineChart
