@@ -32,6 +32,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private val SELECTED_INDEX = "selected_index"
     private var selectedItem = -1
+    private lateinit var spinner: Spinner
+    private lateinit var progressBar: ProgressBar
     lateinit var lineChartAdapter: LineChartAdapter
     lateinit var candleChartAdapter: CandleStickChartAdapter
     private lateinit var viewModel: MarketViewModel
@@ -53,11 +55,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
 
-        if (savedInstanceState != null) {
-            spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
-            progressBar.visibility = View.VISIBLE
 
-        }
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -70,13 +68,18 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     fun updateCoin() {
 
-        val selectedIndex = activity?.findViewById<Spinner>(R.id.spinner)?.selectedItemPosition
-        if (selectedItem != selectedIndex) {
+        val index = activity?.findViewById<Spinner>(R.id.spinner)?.selectedItemPosition
 
-            chart_view.visibility = View.GONE
-            progressBar.visibility = View.VISIBLE
+        index?.let{
+
+            if (selectedItem != index) {
+
+                chart_view.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
+            }
+            selectedItem = index
         }
-        selectedItem = selectedIndex!!
+
 
         if (spinner.selectedItem != null) {
             val selectedItem = spinner.selectedItem as BookItem
@@ -119,6 +122,14 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         candleChart = inflate.findViewById(R.id.candle_chart)
         lineChartAdapter = LineChartAdapter(lineChart)
         candleChartAdapter = CandleStickChartAdapter(candleChart)
+        spinner = inflate.findViewById(R.id.spinner)
+        progressBar = inflate.findViewById(R.id.progressBar)
+
+        if (savedInstanceState != null) {
+            spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
+            progressBar.visibility = View.VISIBLE
+
+        }
 
         refreshLayout?.setColorSchemeColors(ContextCompat.getColor(context!!, R.color.colorPrimaryDark))
         refreshLayout?.setOnRefreshListener {
@@ -131,11 +142,9 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_settings -> {
-                    Log.i(TAG, "click on update")
                     updateCoin()
                 }
                 R.id.action_auto_refresh -> {
-                    Log.i(TAG, "click on auto refresh")
                     it.isChecked = !it.isChecked
                     viewModel.autoRefreshData(it.isChecked)
                 }
