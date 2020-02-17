@@ -7,23 +7,20 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Single
 import io.reactivex.SingleOnSubscribe
-import me.roberto.kitso.database.Injection
+import me.roberto.kitso.database.BookItemDao
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.network.KitsoService
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Inject
 
 
 /**
  * Created by roberto on 20/07/17.
  */
-class KitsoRepository {
-    private val kitsoService: KitsoService = Injection.provideKitsoService()
-
+class KitsoRepository @Inject constructor(val kitsoService: KitsoService, val datasource: BookItemDao){
 
     private val TAG: String = "KITSO_REPO"
 

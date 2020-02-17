@@ -3,29 +3,40 @@ package me.roberto.kitso.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ProgressBar
+import android.widget.RadioGroup
+import android.widget.Spinner
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.charts.LineChart
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_market.*
-import kotlinx.android.synthetic.main.price_layout.*
+import kotlinx.android.synthetic.main.fragment_market.chart_view
+import kotlinx.android.synthetic.main.fragment_market.my_toolbar
+import kotlinx.android.synthetic.main.fragment_market.radioGroup
+import kotlinx.android.synthetic.main.price_layout.createdAt
+import kotlinx.android.synthetic.main.price_layout.max
+import kotlinx.android.synthetic.main.price_layout.min
+import kotlinx.android.synthetic.main.price_layout.precio
+import kotlinx.android.synthetic.main.price_layout.vol
 import me.roberto.kitso.R
-import me.roberto.kitso.database.Injection
+import me.roberto.kitso.di.DaggerApplicationComponent
+import me.roberto.kitso.di.KitsoApplication
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.utils.Utils.stringToDate
+import javax.inject.Inject
 
 
 class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -36,8 +47,9 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var progressBar: ProgressBar
     lateinit var lineChartAdapter: LineChartAdapter
     lateinit var candleChartAdapter: CandleStickChartAdapter
-    private lateinit var viewModel: MarketViewModel
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val viewModel by viewModels <MarketViewModel> {viewModelFactory}
     private lateinit var lineChart: LineChart
     private lateinit var candleChart:CandleStickChart
     val PREFS = "me.roberto.kitso.preferences"
@@ -47,14 +59,13 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val applicationContext = context?.applicationContext as KitsoApplication
+        DaggerApplicationComponent.builder()
+                .applicationContext(applicationContext)
+                .build()
+                .inject(this)
+
         selectedItem = savedInstanceState?.getInt(SELECTED_INDEX) ?: -1
-
-        context?.let {
-            viewModelFactory = Injection.provideViewModelFactory(it)
-            viewModel = ViewModelProvider(this,viewModelFactory)[MarketViewModel::class.java]
-        }
-
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
