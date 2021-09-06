@@ -6,17 +6,16 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
@@ -27,13 +26,12 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_market.*
 import kotlinx.android.synthetic.main.price_layout.*
+import me.roberto.kitso.R
+import me.roberto.kitso.database.Injection
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
-import me.roberto.kitso.R
-import me.roberto.kitso.database.Injection
 import me.roberto.kitso.utils.Utils.stringToDate
-import kotlin.collections.ArrayList
 
 
 class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -116,7 +114,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val inflate = inflater.inflate(R.layout.fragment_market, container, false)
         refreshLayout = inflate.findViewById(R.id.refresh)
 
-        refreshLayout?.setColorSchemeColors(ContextCompat.getColor(context!!, R.color.colorPrimaryDark))
+        refreshLayout?.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark))
         refreshLayout?.setOnRefreshListener {
             updateCoin()
         }
@@ -135,7 +133,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         adapter?.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
 
-        val savedCoin = activity!!.getSharedPreferences(PREFS, 0).getInt(PREFS_SELECTED_ITEM, -1)
+        val savedCoin = requireActivity().getSharedPreferences(PREFS, 0).getInt(PREFS_SELECTED_ITEM, -1)
         if (savedCoin > -1) {
             spinner.setSelection(savedCoin)
         }
@@ -159,50 +157,53 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
     fun setLineChartVisual(dataSet: LineDataSet, dataList: List<HistoricData>?, labels: MutableList<String>) {
-        dataSet.fillColor = ContextCompat.getColor(activity!!, R.color.colorPrimary)
-        dataSet.color = ContextCompat.getColor(activity!!, R.color.colorPrimary)
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        dataSet.highLightColor = ContextCompat.getColor(activity!!, R.color.colorPrimaryDark)
-        dataSet.axisDependency = YAxis.AxisDependency.LEFT
-        dataSet.lineWidth = 2f
-        dataSet.setCircleColor(ContextCompat.getColor(activity!!, R.color.colorPrimaryDark))
-        dataSet.setDrawCircleHole(false)
-        dataSet.setDrawValues(false)
-        linear_chart.axisRight.setDrawLabels(false)
-        when (dataList?.size) {
-            in 0..10 -> linear_chart.xAxis.granularity = 2f
-            in 11..20 -> linear_chart.xAxis.granularity = 4f
-            in 21..31 -> linear_chart.xAxis.granularity = 7f
-
-        }
-
-        linear_chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        linear_chart.xAxis.setDrawGridLines(false)
-        val description = Description()
-        description.isEnabled = false
-        linear_chart.description = description
-        val legend = linear_chart.legend
-        legend.isEnabled = false
-
-
-        val formatter = object : IAxisValueFormatter {
-            override fun getFormattedValue(value: Float, axis: AxisBase?): String? {
-
-                if (value.toInt() <= labels.size) {
-                    return labels[value.toInt()]
-                }
-
-                return " "
+        context?.let {
+            dataSet.fillColor = ContextCompat.getColor(it, R.color.colorPrimary)
+            dataSet.color = ContextCompat.getColor(it, R.color.colorPrimary)
+            dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+            dataSet.highLightColor = ContextCompat.getColor(it, R.color.colorPrimaryDark)
+            dataSet.axisDependency = YAxis.AxisDependency.LEFT
+            dataSet.lineWidth = 2f
+            dataSet.setCircleColor(ContextCompat.getColor(it, R.color.colorPrimaryDark))
+            dataSet.setDrawCircleHole(false)
+            dataSet.setDrawValues(false)
+            linear_chart.axisRight.setDrawLabels(false)
+            when (dataList?.size) {
+                in 0..10 -> linear_chart.xAxis.granularity = 2f
+                in 11..20 -> linear_chart.xAxis.granularity = 4f
+                in 21..31 -> linear_chart.xAxis.granularity = 7f
 
             }
 
+            linear_chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+            linear_chart.xAxis.setDrawGridLines(false)
+            val description = Description()
+            description.isEnabled = false
+            linear_chart.description = description
+            val legend = linear_chart.legend
+            legend.isEnabled = false
+
+
+            val formatter = object : IAxisValueFormatter {
+                override fun getFormattedValue(value: Float, axis: AxisBase?): String? {
+
+                    if (value.toInt() <= labels.size) {
+                        return labels[value.toInt()]
+                    }
+
+                    return " "
+
+                }
+
+            }
+
+            linear_chart.xAxis.valueFormatter = formatter
+            linear_chart.data = LineData(dataSet)
+            linear_chart.invalidate()
+
+
         }
-
-        linear_chart.xAxis.valueFormatter = formatter
-        linear_chart.data = LineData(dataSet)
-        linear_chart.invalidate()
-
-
+      
     }
 
 
@@ -212,7 +213,7 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
         dataSet.decreasingColor = Color.argb(200, 158, 109, 131)
         dataSet.shadowColorSameAsCandle = true
         dataSet.decreasingPaintStyle = Paint.Style.FILL_AND_STROKE
-        dataSet.increasingColor = ContextCompat.getColor(activity!!, R.color.colorPrimary)
+        dataSet.increasingColor = ContextCompat.getColor(requireContext(), R.color.colorPrimary)
         dataSet.increasingPaintStyle = Paint.Style.STROKE
         dataSet.neutralColor = Color.BLUE
         dataSet.valueTextColor = Color.RED
@@ -304,17 +305,14 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModelFactory = Injection.provideViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MarketViewModel::class.java)
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        viewModelFactory = Injection.provideViewModelFactory(activity!!)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MarketViewModel::class.java)
-
-        viewModel.availableBooks?.observe(this, bookObserver)
-        viewModel.book?.observe(this, tickerObserver)
-        viewModel.chartData?.observe(this, chartDataObserver)
+        viewModel.availableBooks.observe(viewLifecycleOwner, bookObserver)
+        viewModel.book.observe(viewLifecycleOwner, tickerObserver)
+        viewModel.chartData.observe(viewLifecycleOwner, chartDataObserver)
 
         viewModel.updateBooks()
 
@@ -357,6 +355,8 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
+
     }
+
 
 }

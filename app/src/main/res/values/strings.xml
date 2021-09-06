@@ -29,5 +29,6 @@
     <string name="seven_days">7d</string>
     <string name="auto_refresh">Auto Refresh</string>
     <string name="linear">Linear</string>
-    <string name="candle" >Candlestick</string>
+    <string name="candle">Candlestick</string>
+    <string name="title_activity_compose">ComposeActivity</string>
 </resources>

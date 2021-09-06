@@ -67,8 +67,6 @@ class KitsoRepositoryTest {
 
         for (bookItem in availableBooks) {
 
-
-
                 assertNotNull(bookItem)
                 assertNotNull(bookItem.minimumAmount)
                 assertNotNull(bookItem.maximumAmount)

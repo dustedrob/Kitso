@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit
  * Created by roberto on 6/07/17.
  */
 class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
-    var book: MutableLiveData<Book>? = MutableLiveData()
-    var chartData: MutableLiveData<List<HistoricData>>? = MutableLiveData()
-    var availableBooks: MutableLiveData<List<BookItem>>? = MutableLiveData()
-    var orderBook: MutableLiveData<OrderBook>? = MutableLiveData()
+    var book: MutableLiveData<Book> = MutableLiveData()
+    var chartData: MutableLiveData<List<HistoricData>> = MutableLiveData()
+    var availableBooks: MutableLiveData<List<BookItem>> = MutableLiveData()
+    var orderBook: MutableLiveData<OrderBook> = MutableLiveData()
     var kitsoRepository: KitsoRepository? = KitsoRepository()
     lateinit var currentCoin: String
     lateinit var disposable: Disposable
 
 
-    private val TAG: String? = "market_model"
+    private val TAG: String = "market_model"
 
     fun updateBook(s: String) {
 
@@ -38,23 +38,6 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 
 
     }
-
-//        kitsoRepository?.getOrderBook(s)?.observeOn(AndroidSchedulers.mainThread())
-//                ?.subscribeOn(Schedulers.newThread())?.subscribeWith(object: DisposableObserver<OrderBook>()
-//        {
-//            override fun onError(e: Throwable) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onComplete() {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onNext(t: OrderBook) {
-//                orderBook?.value=t
-//            }
-//
-//        })
 
 
     fun autoRefreshData(checked: Boolean) {
@@ -78,9 +61,9 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 
     }
 
-    private fun streamBooks(): Observable<List<BookItem>>? {
+    private fun streamBooks(): Observable<List<BookItem>> {
 
-        val localBooks: Maybe<List<BookItem>>? = dataSource.load().subscribeOn(Schedulers.newThread()).filter { list -> !list.isEmpty() }
+        val localBooks: Maybe<List<BookItem>> = dataSource.load().subscribeOn(Schedulers.newThread()).filter { list -> !list.isEmpty() }
 
         val remoteBooks=kitsoRepository?.getAvailableBooks()?.subscribeOn(Schedulers.newThread())?.doOnNext{
             list->
@@ -106,7 +89,7 @@ class MarketViewModel(private val dataSource: BookItemDao) : ViewModel() {
 //                ?.subscribeOn(Schedulers.io())
 
 
-        return Observable.concat(localBooks?.toObservable(), remoteBooks)
+        return Observable.concat(localBooks.toObservable(), remoteBooks)
     }
 
 
