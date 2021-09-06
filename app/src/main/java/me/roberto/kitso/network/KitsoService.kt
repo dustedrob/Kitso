@@ -1,7 +1,8 @@
-package me.roberto.kitso
+package me.roberto.kitso.network
 
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
+import me.roberto.kitso.model.OrderBook
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,11 +1,10 @@
-package me.roberto.kitso.ui
+package me.roberto.kitso.kitsocard
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import me.roberto.kitso.R
 
 /**
  * Created by roberto on 14/06/17.
@@ -21,11 +20,11 @@ class KitsoCard(context: Context, attrs: AttributeSet) : CardView(context, attrs
         var textView = findViewById<TextView>(R.id.top_title)
         textView.text=top_title_text
 
-        textView = findViewById<TextView>(R.id.amount)
+        textView = findViewById(R.id.amount)
         textView.text=amount_text
 
 
-        textView = findViewById<TextView>(R.id.bottom_title) as TextView
+        textView = findViewById(R.id.bottom_title)
         textView.text=bottom_title_text
     }
 
@@ -35,29 +34,28 @@ class KitsoCard(context: Context, attrs: AttributeSet) : CardView(context, attrs
     fun initializeViews(context: Context)
     {
 
-        var layoutInflater= context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layoutInflater= context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         layoutInflater.inflate(R.layout.kitso_card,this)
 
     }
 
-
     fun setTopTitle(text: String)
     {
-        var topTitle=this.findViewById<TextView>(R.id.top_title) as TextView
+        val topTitle=this.findViewById(R.id.top_title) as TextView
         topTitle.text=text
     }
 
 
     fun setAmount(text: String)
     {
-        var amount=this.findViewById<TextView>(R.id.amount) as TextView
+        val amount=this.findViewById(R.id.amount) as TextView
         amount.text=text
     }
 
     fun setBottomTitle(text: String )
     {
-        var bottomTitle=this.findViewById<TextView>(R.id.bottom_title) as TextView
-        bottomTitle.text=text;
+        val bottomTitle=this.findViewById(R.id.bottom_title) as TextView
+        bottomTitle.text=text
     }
 
 
