@@ -45,17 +45,4 @@ object Utils {
         return typedValue
     }
 
-    @ColorInt
-    fun resolveColorAttr(context: Context, @AttrRes colorAttr: Int): Int {
-        val resolvedAttr = resolveThemeAttr(context, colorAttr)
-        val colorRes = if (resolvedAttr.resourceId != 0) resolvedAttr.resourceId else resolvedAttr.data
-        return ContextCompat.getColor(context, colorRes)
-    }
-
-    fun resolveThemeAttr(context: Context, @AttrRes attrRes: Int): TypedValue {
-        val theme = context.getTheme()
-        val typedValue = TypedValue()
-        theme.resolveAttribute(attrRes, typedValue, true)
-        return typedValue
-    }
 }

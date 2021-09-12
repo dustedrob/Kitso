@@ -8,8 +8,8 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Single
 import io.reactivex.SingleOnSubscribe
 import me.roberto.kitso.database.BookItemDao
+import me.roberto.kitso.network.AvailableBooksResponse
 import me.roberto.kitso.model.Book
-import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
 import me.roberto.kitso.network.KitsoService
 import okhttp3.OkHttpClient
@@ -25,7 +25,7 @@ class KitsoRepository @Inject constructor(val kitsoService: KitsoService, val da
     private val TAG: String = "KITSO_REPO"
 
 
-    fun getHistoricData(bookSymbol: String, range: String): Single<List<HistoricData>>? {
+    fun getHistoricData(bookSymbol: String, range: String): Single<List<HistoricData>>{
 
         //this is unofficial and not part of the current public api so we skip using retrofit
         //and the rest of the repository
@@ -52,12 +52,11 @@ class KitsoRepository @Inject constructor(val kitsoService: KitsoService, val da
     fun getBook(bookSymbol: String): Single<Book> {
         val ticker = kitsoService.getTicker(bookSymbol)
         val single = Single.create(SingleOnSubscribe<Book> { e ->
-
-
-            val payload = ticker.execute().body()?.payload
+            val response = ticker.execute()
+            val payload = response.body()
 
             if (payload != null) {
-                e.onSuccess(payload)
+                e.onSuccess(payload.book)
             } else {
                 e.onError(Exception("Book not found"))
             }
@@ -67,17 +66,17 @@ class KitsoRepository @Inject constructor(val kitsoService: KitsoService, val da
     }
 
 
-    fun getAvailableBooks(): Observable<List<BookItem>>? {
+    fun getAvailableBooks(): Observable<AvailableBooksResponse> {
 
 
-        return Observable.create(ObservableOnSubscribe<List<BookItem>> { e ->
+        return Observable.create(ObservableOnSubscribe<AvailableBooksResponse> { e ->
 
             val availableBooks = kitsoService.getAvailableBooks()
             val response = availableBooks.execute()
 
             if (response.isSuccessful) {
 
-                val payload = response?.body()?.payload
+                val payload = response?.body()
                 if (payload != null) {
                     e.onNext(payload)
                     e.onComplete()

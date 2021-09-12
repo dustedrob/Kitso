@@ -9,10 +9,6 @@ import com.squareup.moshi.JsonClass
  */
 
 @Keep
-@JsonClass(generateAdapter = true)
-data class KitsoResponse<T>(
+abstract class KitsoResponse
         @Json(name = "success")
-        val success: Boolean,
-        @Json(name = "payload")
-        val payload:T
-)
+        var success: Boolean = false

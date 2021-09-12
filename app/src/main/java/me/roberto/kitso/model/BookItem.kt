@@ -8,36 +8,34 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @Keep
-
 @Entity
-@JsonClass(generateAdapter = true)
 data class BookItem(
 
-        @Json(name = "book")
         @PrimaryKey
         @NonNull
+        @field:Json(name = "book")
         val book: String,
 
-        @Json(name = "minimum_price")
+        @field:Json(name = "minimum_price")
         val minimumPrice: String,
 
-        @Json(name = "maximum_price")
+        @field:Json(name = "maximum_price")
         val maximumPrice: String,
 
-        @Json(name = "minimum_value")
+        @field:Json(name = "minimum_value")
         val minimumValue: String,
 
-        @Json(name = "maximum_amount")
+        @field:Json(name = "maximum_amount")
         val maximumAmount: String,
 
-        @Json(name = "maximum_value")
+        @field:Json(name = "maximum_value")
         val maximumValue: String,
 
-        @Json(name = "minimum_amount")
+        @field:Json(name = "minimum_amount")
         val minimumAmount: String
 
 ) {
     override fun toString(): String {
-        return book.toString().replace("_", "/").toUpperCase()
+        return book.replace("_", "/").uppercase()
     }
 }

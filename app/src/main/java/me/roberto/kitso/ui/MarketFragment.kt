@@ -181,9 +181,9 @@ class MarketFragment : Fragment(), AdapterView.OnItemSelectedListener {
             spinner.setSelection(savedInstanceState.getInt(SELECTED_INDEX))
             progressBar.visibility = View.VISIBLE
         }
-        viewModel.availableBooks?.observe(viewLifecycleOwner, bookObserver)
-        viewModel.book?.observe(viewLifecycleOwner, tickerObserver)
-        viewModel.chartData?.observe(viewLifecycleOwner, chartDataObserver)
+        viewModel.book.observe(viewLifecycleOwner, tickerObserver)
+        viewModel.availableBooks.observe(viewLifecycleOwner, bookObserver)
+        viewModel.chartData.observe(viewLifecycleOwner, chartDataObserver)
         viewModel.updateBooks()
     }
 

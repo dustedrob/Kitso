@@ -25,13 +25,13 @@ class KitsoRepositoryTest {
 
         val availableBooks=values[0]
 
-        for (bookItem in availableBooks) {
+        for (bookItem in availableBooks.books) {
 
 
 
             assertNotNull(bookItem)
 
-            val subscriber=kitsoRepository.getBook(bookItem.book!!).test()
+            val subscriber=kitsoRepository.getBook(bookItem.book).test()
             subscriber.assertNoErrors().awaitTerminalEvent()
             val book = subscriber.values()[0]
 
@@ -66,7 +66,7 @@ class KitsoRepositoryTest {
 
         val availableBooks=values[0]
 
-        for (bookItem in availableBooks) {
+        for (bookItem in availableBooks.books) {
 
                 assertNotNull(bookItem)
                 assertNotNull(bookItem.minimumAmount)

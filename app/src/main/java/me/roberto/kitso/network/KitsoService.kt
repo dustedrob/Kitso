@@ -1,7 +1,5 @@
 package me.roberto.kitso.network
 
-import me.roberto.kitso.model.Book
-import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.OrderBook
 import retrofit2.Call
 import retrofit2.http.GET
@@ -13,12 +11,12 @@ import retrofit2.http.Query
 interface KitsoService {
 
     @GET("ticker")
-    fun getTicker(@Query("book") book: String): Call<KitsoResponse<Book>>
+    fun getTicker(@Query("book") book: String): Call<BookResponse>
 
     @GET("order_book")
-    fun getOrderBook(@Query("book") book: String): Call<KitsoResponse<OrderBook>>
+    fun getOrderBook(@Query("book") book: String): Call<OrderBook>
 
     @GET("available_books")
-    fun getAvailableBooks(): Call<KitsoResponse<List<BookItem>>>
+    fun getAvailableBooks(): Call<AvailableBooksResponse>
 
 }

@@ -3,33 +3,33 @@ package me.roberto.kitso.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.*
+import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import me.roberto.kitso.database.BookItemDao
 import me.roberto.kitso.model.Book
 import me.roberto.kitso.model.BookItem
 import me.roberto.kitso.model.HistoricData
-import me.roberto.kitso.database.BookItemDao
 import me.roberto.kitso.model.OrderBook
 import me.roberto.kitso.repository.KitsoRepository
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 /**
  * Created by roberto on 6/07/17.
  */
-class MarketViewModel @Inject constructor(
+class MarketViewModel (
         private val dataSource: BookItemDao,
         private var kitsoRepository: KitsoRepository
 ) : ViewModel() {
     val disposable = CompositeDisposable()
     lateinit var autoDisposable: Disposable
-    var book: MutableLiveData<Book>? = MutableLiveData()
-    var chartData: MutableLiveData<List<HistoricData>>? = MutableLiveData()
-    var availableBooks: MutableLiveData<List<BookItem>>? = MutableLiveData()
-    var orderBook: MutableLiveData<OrderBook>? = MutableLiveData()
+    var book: MutableLiveData<Book> = MutableLiveData()
+    var chartData: MutableLiveData<List<HistoricData>> = MutableLiveData()
+    var availableBooks: MutableLiveData<List<BookItem>> = MutableLiveData()
+    var orderBook: MutableLiveData<OrderBook> = MutableLiveData()
     lateinit var currentCoin: String
 
 
@@ -45,7 +45,10 @@ class MarketViewModel @Inject constructor(
         currentCoin = s
         kitsoRepository.getBook(s).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe({ bookItem -> book?.value = bookItem }, { t -> Log.e(TAG, "something went wrong: ${t.message}") })
+                .subscribe({ bookItem ->
+                    book.value = bookItem
+                           },
+                    { t -> Log.e(TAG, "something went wrong: ${t.message}") })
                 .also {
                     disposable.add(it)
                 }
@@ -72,10 +75,12 @@ class MarketViewModel @Inject constructor(
 
     }
 
-    private fun streamBooks(): Observable<List<BookItem>>? {
+    private fun streamBooks(): Observable<List<BookItem>> {
 
-        val localBooks: Maybe<List<BookItem>>? = dataSource.load().subscribeOn(Schedulers.newThread()).filter { list -> !list.isEmpty() }
-        val remoteBooks = kitsoRepository.getAvailableBooks()?.subscribeOn(Schedulers.newThread())?.doOnNext { list ->
+        val localBooks: Maybe<List<BookItem>> = dataSource.load().subscribeOn(Schedulers.newThread()).filter { list -> list.isNotEmpty() }
+        val remoteBooks = kitsoRepository.getAvailableBooks().map {
+            it.books
+        }.subscribeOn(Schedulers.newThread())?.doOnNext { list ->
             list.forEach {
                 dataSource.save(it)
             }
@@ -97,7 +102,7 @@ class MarketViewModel @Inject constructor(
 //        }
 //                ?.subscribeOn(Schedulers.io())
 
-        return Observable.concat(localBooks?.toObservable(), remoteBooks)
+        return Observable.concat(localBooks.toObservable(), remoteBooks)
     }
 
 
@@ -116,7 +121,7 @@ class MarketViewModel @Inject constructor(
     fun updateChartData(book: String, range: String) {
         kitsoRepository.getHistoricData(book, range)?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.newThread())
-                ?.subscribe({ data -> chartData?.value = data }, { t -> Log.e(TAG, "seomthing went wront: ${t.message}") })
+                ?.subscribe({ data -> chartData.value = data }, { t -> Log.e(TAG, "seomthing went wront: ${t.message}") })
                 .also { disposable.addAll(it) }
     }
 
