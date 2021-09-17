@@ -17,14 +17,14 @@ android {
             storePassword store_password_kitso
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '29.0.1'
     defaultConfig {
         applicationId "me.roberto.kitso"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 13
-        versionName "1.0.11"
+        targetSdkVersion 31
+        versionCode 17
+        versionName "1.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
